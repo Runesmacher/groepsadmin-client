@@ -63,6 +63,9 @@
     }
 
     $scope.verzenden = function(){
+
+      $scope.isSendingMail = true;
+
       var sjabloonObj = {
           "vanGroep": $scope.selectedgroup.groepsnummer,
           "replyTo": $scope.sjabloon.replyTo,
@@ -75,25 +78,36 @@
               "groepseigenGegevens": []
           }
       }
-      var payload = "--AaB03x\n";
-      payload+= 'Content-Disposition: form-data; name="sjabloon"\nContent-Type: application/json\n\n';
+      var payload = 'Content-Type: multipart/form-data; charset=utf-8; boundary="--AaB03x"\n\n';
+      payload += "--AaB03x\n";
+      payload += 'Content-Disposition: form-data; name="sjabloon"\nContent-Type: application/json\n\n';
       payload += JSON.stringify(sjabloonObj);
-      payload+= "\n\n--AaB03x--";
+
+      // for every file selected, create an attachment
+      _.each($scope.files, function(val,key){
+        payload += "\n\n";
+        payload += "--AaB03x\n";
+        payload += 'name="attachments"; fileName="'+val.filename+'"\nContent-Transfer-Encoding: base64';
+        payload += '\nContent-Type: '+val.filetype+'\n\n';
+        payload += val.base64;
+      });
+
+      payload+= "\n--AaB03x--";
 
       ES.sendMail(payload).then(function(res){
         console.log("emailcontroller - YAY---- mail was sent", res);
         var feedback = ES.getMailReportMessage(res);
-
         $scope.openDialog(feedback);
+        $scope.isSendingMail = false;
 
+      }, function(err){
+        AlertService.add('danger', "E-mail kon niet worden verstuurd", 5000);
+        $scope.isSendingMail = false;
       });
     }
 
     // bevestiging return functie
-    // --------------------------------------
-    $scope.confirmEmailReport = function(result){
-
-    }
+    // --------------------------
 
     $scope.getLeden = function(offset){
       $scope.ledenLaden = true;
@@ -215,7 +229,6 @@
         AlertService.add('success', "Template '"+ sjabloon.naam + "' werd succesvol opgeslagen", 5000);
         deferred.resolve(result);
       });
-
       return deferred.promise;
 
     }
@@ -286,8 +299,6 @@
 
     /*** MODAL LOGIC ***/
 
-    $scope.items = ['item1', 'item2', 'item3'];
-
     $scope.animationsEnabled = true;
 
     // template van deze dialog staat in index.html (#emailConfirmationModal)
@@ -313,6 +324,25 @@
       };
 
     /*******/
+
+    $scope.removeAttachment = function(file) {
+      var index = $scope.files.indexOf(file);
+      $scope.files.splice(index, 1);
+    }
+
+    /*** BASE64 ENCODED ATTACHMENTS ***/
+    $scope.onChange = function (e, fileList) {
+      alert('this is on-change handler!');
+    };
+
+    $scope.onLoad = function (e, reader, file, fileList, fileOjects, fileObj) {
+      alert('this is handler for file reader onload event!');
+    };
+
+    var uploadedCount = 0;
+
+    $scope.files = [];
+    /*** BASE64 ENCODED ATTACHMENTS *****/
 
     init();
 

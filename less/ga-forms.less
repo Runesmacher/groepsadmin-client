@@ -354,3 +354,17 @@ legend{
     text-decoration: underline;
   }
 }
+
+// small hack to hide the 'no file chosen' message
+form[name=emailForm]{
+  input[type=file]:after{
+    content:'------------------------';
+    cursor:pointer;
+    z-index:300000;
+    background-color:white;
+    color:white;
+    height: 40px;
+
+  }
+
+}

@@ -24,7 +24,7 @@
   <!-- NEW ACTIONS -->
   <div class="pull-right">
     <div class="hidden-xs hidden-sm">
-      <button type="submit" class="btn btn-apply" ng-disabled="isLoadingGroepen" ng-click="verzenden()"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Verzenden&nbsp;
+      <button type="submit" class="btn btn-apply" ng-disabled="isLoadingGroepen || isSendingMail" ng-click="verzenden()"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;Verzenden&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isSendingMail"></i>
     </div>
     <div class="hidden-md hidden-lg">
       <div class="btn-group pull-right" uib-dropdown>
@@ -180,9 +180,33 @@
                 </div>
               </div>
             </div>
+            <div class="form-group">
+              <div class="col-xs-2 col-xxs-12 ">
+                <label for="file" class="control-label">Bijlagen</label>
+              </div>
+              <div class="col-xs-10 col-xxs-12">
+                <input type="file" ng-model="files" name="files" base-sixty-four-input multiple  minsize="500" required minnum="2" on-change="onChange">
+                <table class="table table-bordered table-striped" ng-show="files.length > 0">
+                  <tr>
+                    <th>Bestandsnaam</th>
+                    <th>Bestandstype</th>
+                    <th>Grootte (<small>KB</small>)</th>
+                    <!--<th>Base64</th>-->
+                    <th>Verwijderen</th>
+                  </tr>
+                  <tr ng-repeat="file in files">
+                    <td>{{file.filename}}</td>
+                    <td>{{file.filetype}}</td>
+                    <td>{{file.filesize / 1000}}</td>
+                    <!--<td>{{file.base64.substring(0, 30)}}...</td>-->
+                    <td><button class="btn" ng-click="removeAttachment(file)"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Verwijderen</button>
+                  </tr>
+                </table>
+              </div>
+
+            </div>
             <div class="form-group email-message" id="emailMessage">
               <div id="editorContainer" class="col-xs-12">
-
               </div>
             </div>
           </fieldset>

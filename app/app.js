@@ -35,6 +35,7 @@
     'ga.ui.dialog',
     'ga.filters',
     'ga.utils',
+    'naif.base64',
     'ui.bootstrap',
     'infinite-scroll',
     'ngSanitize',

@@ -30,6 +30,8 @@
     "iban": "~0.0.8",
     "angulartics-piwik": "^1.0.6",
     "angular-ui-tinymce": "~0.0.18",
-    "angular-filter": "^0.5.16"
+    "angular-filter": "^0.5.16",
+    "angular-base64": "~2.0.5",
+    "angular-base64-upload": "~0.1.22"
   }
 }
